@@ -35,7 +35,6 @@ public class Switch extends Entity {
         return true;
     }
 
-    @Override
     public void onOverlap(GameMap map, Entity entity) {
         if (entity instanceof Boulder) {
             activated = true;
@@ -43,7 +42,6 @@ public class Switch extends Entity {
         }
     }
 
-    @Override
     public void onMovedAway(GameMap map, Entity entity) {
         if (entity instanceof Boulder) {
             activated = false;
@@ -52,10 +50,5 @@ public class Switch extends Entity {
 
     public boolean isActivated() {
         return activated;
-    }
-
-    @Override
-    public void onDestroy(GameMap gameMap) {
-        return;
     }
 }
