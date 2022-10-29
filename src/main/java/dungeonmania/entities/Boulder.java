@@ -18,7 +18,6 @@ public class Boulder extends Entity {
         return false;
     }
 
-    @Override
     public void onOverlap(GameMap map, Entity entity) {
         if (entity instanceof Player) {
             map.moveTo(this, entity.getFacing());
@@ -31,15 +30,5 @@ public class Boulder extends Entity {
             if (!e.canMoveOnto(map, this)) return false;
         }
         return true;
-    }
-
-    @Override
-    public void onMovedAway(GameMap map, Entity entity) {
-        return;
-    }
-
-    @Override
-    public void onDestroy(GameMap gameMap) {
-        return;
     }
 }

@@ -67,7 +67,6 @@ public class Player extends Entity implements Battleable {
         map.moveTo(this, Position.translateBy(this.getPosition(), direction));
     }
 
-    @Override
     public void onOverlap(GameMap map, Entity entity) {
         if (entity instanceof Enemy) {
             if (entity instanceof Mercenary) {
@@ -156,15 +155,5 @@ public class Player extends Entity implements Battleable {
 
     public BattleStatistics applyBuff(BattleStatistics origin) {
         return state.applyBuffState(origin);
-    }
-
-    @Override
-    public void onMovedAway(GameMap map, Entity entity) {
-        return;
-    }
-
-    @Override
-    public void onDestroy(GameMap gameMap) {
-        return;
     }
 }
