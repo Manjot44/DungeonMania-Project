@@ -15,6 +15,7 @@ import dungeonmania.entities.Switch;
 import dungeonmania.entities.collectables.Bomb;
 import dungeonmania.entities.enemies.Enemy;
 import dungeonmania.entities.enemies.ZombieToastSpawner;
+import dungeonmania.entities.inventory.InventoryItem;
 import dungeonmania.util.Direction;
 import dungeonmania.util.Position;
 
@@ -115,7 +116,11 @@ public class GameMap {
     private void triggerOverlapEvent(Entity entity) {
         List<Runnable> overlapCallbacks = new ArrayList<>();
         getEntities(entity.getPosition()).forEach(e -> {
-            if (e != entity)
+            if (e instanceof InventoryItem && entity instanceof Player)
+                //makes the player moving the focus, as opposed to generating overlaps
+                //for every immobile item which are inventory items
+            overlapCallbacks.add(() -> entity.onOverlap(this, e));
+            else if (e != entity)
             overlapCallbacks.add(() -> e.onOverlap(this, entity));
         });
         overlapCallbacks.forEach(callback -> {
