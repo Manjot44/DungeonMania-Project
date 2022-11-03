@@ -1,34 +1,46 @@
 package dungeonmania.goals;
 
-import java.util.List;
+import java.util.HashMap;
 
 import dungeonmania.Game;
-import dungeonmania.entities.Entity;
-import dungeonmania.entities.Exit;
-import dungeonmania.entities.Player;
-import dungeonmania.entities.Switch;
-import dungeonmania.entities.collectables.Treasure;
-import dungeonmania.util.Position;
+import dungeonmania.goals.GoalConditions.BothGoals;
+import dungeonmania.goals.GoalConditions.BouldersGoal;
+import dungeonmania.goals.GoalConditions.EitherGoals;
+import dungeonmania.goals.GoalConditions.ExitGoal;
+import dungeonmania.goals.GoalConditions.TreasureGoal;
 
 public class Goal {
     private String type;
+    private GoalConditionsInterface goalConditionType;
     private int target;
     private Goal goal1;
     private Goal goal2;
+    private HashMap<String, GoalConditionsInterface> goalConditionsHashMap = new HashMap<>() {{
+        put("exit", new ExitGoal());
+        put("boulders", new BouldersGoal());
+        put("treasure", new TreasureGoal());
+        put("AND", new BothGoals());
+        put("OR", new EitherGoals());
+    }};
 
     public Goal(String type) {
         this.type = type;
+        goalConditionType = goalConditionsHashMap.get(type);
     }
 
     public Goal(String type, int target) {
         this.type = type;
         this.target = target;
+        goalConditionType = goalConditionsHashMap.get(type);
+
     }
 
     public Goal(String type, Goal goal1, Goal goal2) {
         this.type = type;
         this.goal1 = goal1;
         this.goal2 = goal2;
+        goalConditionType = goalConditionsHashMap.get(type);
+
     }
 
     /**
@@ -36,48 +48,39 @@ public class Goal {
      */
     public boolean achieved(Game game) {
         if (game.getPlayer() == null) return false;
-        switch (type) {
-            case "exit":
-                Player character = game.getPlayer();
-                Position pos = character.getPosition();
-                List<Exit> es = game.getMap().getEntities(Exit.class);
-                if (es == null || es.size() == 0) return false;
-                return es
-                    .stream()
-                    .map(Entity::getPosition)
-                    .anyMatch(pos::equals);
-            case "boulders":
-                return game.getMap().getEntities(Switch.class).stream().allMatch(s -> s.isActivated());
-            case "treasure":
-                return game.getInitialTreasureCount() - game.getMap().getEntities(Treasure.class).size() >= target;
-            case "AND":
-                return goal1.achieved(game) && goal2.achieved(game);
-            case "OR":
-                return goal1.achieved(game) || goal2.achieved(game);
-            default:
-                break;
-        }
-        return false;
+        return goalConditionType.playerHasWon(game, this);
     }
 
     public String toString(Game game) {
         if (this.achieved(game)) return "";
-        switch (type) {
-            case "exit":
-                return ":exit";
-            case "boulders":
-                return ":boulders";
-            case "treasure":
-                return ":treasure";
-            case "AND":
-                return "(" + goal1.toString(game) + " AND " + goal2.toString(game) + ")";
-            case "OR":
-                if (achieved(game)) return "";
-                else return "(" + goal1.toString(game) + " OR " + goal2.toString(game) + ")";
-            default:
-                break;
-        }
-        return "";
+        return goalConditionType.toString(game, this);
     }
 
+    public boolean hasFirstGoalAchieved(Game game) {
+        return goal1.achieved(game);
+    }
+
+    public boolean hasSecondGoalAchieved(Game game) {
+        return goal2.achieved(game);
+    }
+
+    public String goalOneToString(Game game) {
+        return goal1.toString(game);
+    }
+
+    public String goalTwoToString(Game game) {
+        return goal2.toString(game);
+    }
+
+    public int getTarget() {
+        return target;
+    }
+
+    public Goal getGoal1() {
+        return goal1;
+    }
+
+    public Goal getGoal2() {
+        return goal2;
+    }
 }
