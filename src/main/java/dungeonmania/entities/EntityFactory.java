@@ -30,6 +30,20 @@ public class EntityFactory {
         return constructEntity(jsonEntity, config);
     }
 
+    public void spawnEntity(String entity, Game game, Entity additionalEntities) {
+        switch (entity) {
+            default:
+                return;
+            case "spider":
+                spawnSpider(game);
+                return;
+            case "zombie":
+                spawnZombie(game, (ZombieToastSpawner) additionalEntities);
+                return;
+        }
+    }
+
+
     public void spawnSpider(Game game) {
         GameMap map = game.getMap();
         int tick = game.getTick();

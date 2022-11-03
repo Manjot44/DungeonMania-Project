@@ -80,7 +80,7 @@ public class GameMap {
         zts.forEach(e -> {
             game.register(() -> e.spawn(game), Game.AI_MOVEMENT, e.getId());
         });
-        game.register(() -> game.getEntityFactory().spawnSpider(game), Game.AI_MOVEMENT, "zombieToastSpawner");
+        game.register(() -> game.spawnEntityFromFactory("spider", null), Game.AI_MOVEMENT, "zombieToastSpawner");
     }
 
     public void moveTo(Entity entity, Position position) {

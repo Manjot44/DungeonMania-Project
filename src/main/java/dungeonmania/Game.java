@@ -157,6 +157,10 @@ public class Game {
         return tickCount;
     }
 
+    public void spawnEntityFromFactory(String toSpawn, Entity configEntities) {
+        entityFactory.spawnEntity(toSpawn, this, configEntities);
+    }
+
     public int getTick() {
         return this.tickCount;
     }
