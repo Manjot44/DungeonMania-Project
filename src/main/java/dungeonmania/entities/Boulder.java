@@ -5,7 +5,7 @@ import dungeonmania.map.GameMap;
 import dungeonmania.util.Direction;
 import dungeonmania.util.Position;
 
-public class Boulder extends Entity {
+public class Boulder extends Entity implements Overlappable {
 
     public Boulder(Position position) {
         super(position.asLayer(Entity.CHARACTER_LAYER));
@@ -18,6 +18,7 @@ public class Boulder extends Entity {
         return false;
     }
 
+    @Override
     public void onOverlap(GameMap map, Entity entity) {
         if (entity instanceof Player) {
             map.moveTo(this, entity.getFacing());

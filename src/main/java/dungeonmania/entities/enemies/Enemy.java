@@ -3,12 +3,14 @@ package dungeonmania.entities.enemies;
 import dungeonmania.Game;
 import dungeonmania.battles.BattleStatistics;
 import dungeonmania.battles.Battleable;
+import dungeonmania.entities.Destroyable;
 import dungeonmania.entities.Entity;
+import dungeonmania.entities.Overlappable;
 import dungeonmania.entities.Player;
 import dungeonmania.map.GameMap;
 import dungeonmania.util.Position;
 
-public abstract class Enemy extends Entity implements Battleable {
+public abstract class Enemy extends Entity implements Battleable, Overlappable, Destroyable {
     private BattleStatistics battleStatistics;
 
     public Enemy(Position position, double health, double attack) {

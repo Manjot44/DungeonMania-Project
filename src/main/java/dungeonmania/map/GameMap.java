@@ -8,7 +8,10 @@ import java.util.PriorityQueue;
 import java.util.stream.Collectors;
 
 import dungeonmania.Game;
+import dungeonmania.entities.Destroyable;
 import dungeonmania.entities.Entity;
+import dungeonmania.entities.MovedAwayable;
+import dungeonmania.entities.Overlappable;
 import dungeonmania.entities.Player;
 import dungeonmania.entities.Portal;
 import dungeonmania.entities.Switch;
@@ -104,9 +107,13 @@ public class GameMap {
 
     private void triggerMovingAwayEvent(Entity entity) {
         List<Runnable> callbacks = new ArrayList<>();
-        getEntities(entity.getPosition()).forEach(e -> {
-            if (e != entity)
-            callbacks.add(() -> e.onMovedAway(this, entity));
+        getEntities(entity.getPosition()).stream()
+        .filter(e -> e instanceof MovedAwayable)
+        .forEach(e -> {
+            if (e != entity) {
+                MovedAwayable moved = (MovedAwayable) e;
+                callbacks.add(() -> moved.onMovedAway(this, entity));
+            }
         });
         callbacks.forEach(callback -> {
             callback.run();
@@ -115,13 +122,18 @@ public class GameMap {
 
     private void triggerOverlapEvent(Entity entity) {
         List<Runnable> overlapCallbacks = new ArrayList<>();
-        getEntities(entity.getPosition()).forEach(e -> {
-            if (e instanceof InventoryItem && entity instanceof Player)
+        getEntities(entity.getPosition()).stream()
+        .filter(e -> e instanceof Overlappable)
+        .forEach(e -> {
+            if (e instanceof InventoryItem && entity instanceof Player) {
                 //makes the player moving the focus, as opposed to generating overlaps
                 //for every immobile item which are inventory items
-            overlapCallbacks.add(() -> entity.onOverlap(this, e));
-            else if (e != entity)
-            overlapCallbacks.add(() -> e.onOverlap(this, entity));
+                Overlappable overlap = (Overlappable) entity;
+                overlapCallbacks.add(() -> overlap.onOverlap(this, e));
+            } else if (e != entity) {
+                Overlappable overlap = (Overlappable) e;
+                overlapCallbacks.add(() -> overlap.onOverlap(this, entity));
+            }
         });
         overlapCallbacks.forEach(callback -> {
             callback.run();
@@ -206,7 +218,10 @@ public class GameMap {
 
     public void destroyEntity(Entity entity) {
         removeNode(entity);
-        entity.onDestroy(this);
+        if (entity instanceof Destroyable) {
+            Destroyable destroy = (Destroyable) entity;
+            destroy.onDestroy(this);
+        }
     }
 
     public void addEntity(Entity entity) {
