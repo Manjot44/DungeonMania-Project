@@ -23,7 +23,7 @@ public class Mercenary extends Enemy implements Interactable {
     private boolean allied = false;
 
     public Mercenary(Position position, double health, double attack, int bribeAmount, int bribeRadius) {
-        super(position, health, attack);
+        super(position, health, attack, new ZombieMove());
         this.bribeAmount = bribeAmount;
         this.bribeRadius = bribeRadius;
     }
@@ -61,6 +61,7 @@ public class Mercenary extends Enemy implements Interactable {
     public void interact(Player player, Game game) {
         allied = true;
         bribe(player);
+        setMovement(new AllyMove());
     }
 
     @Override
