@@ -4,7 +4,7 @@ import dungeonmania.Game;
 import dungeonmania.map.GameMap;
 import dungeonmania.util.Position;
 
-public class AllyMove implements Move {
+public class HostileMove implements Move {
     @Override
     public void moveEnemy(Enemy enemy, Game game) {
         GameMap map = game.getMap();
