@@ -2,13 +2,15 @@ package dungeonmania.entities.inventory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-
 import dungeonmania.entities.BattleItem;
 import dungeonmania.entities.Entity;
 import dungeonmania.entities.EntityFactory;
 import dungeonmania.entities.Player;
 import dungeonmania.entities.buildables.Bow;
+import dungeonmania.entities.buildables.Buildable;
+import dungeonmania.entities.buildables.Shield;
 import dungeonmania.entities.collectables.Arrow;
 import dungeonmania.entities.collectables.Key;
 import dungeonmania.entities.collectables.Sword;
@@ -17,6 +19,10 @@ import dungeonmania.entities.collectables.Wood;
 
 public class Inventory {
     private List<InventoryItem> items = new ArrayList<>();
+    private ArrayList<Buildable> buildables = new ArrayList<>(List.of(
+        //Store buildables here
+                        new Bow(0),
+                        new Shield(0, 0)));
 
     public boolean add(InventoryItem item) {
         items.add(item);
@@ -28,18 +34,35 @@ public class Inventory {
     }
 
     public List<String> getBuildables() {
-
-        int wood = count(Wood.class);
-        int arrows = count(Arrow.class);
-        int treasure = count(Treasure.class);
-        int keys = count(Key.class);
         List<String> result = new ArrayList<>();
 
-        if (wood >= 1 && arrows >= 3) {
-            result.add("bow");
-        }
-        if (wood >= 2 && (treasure >= 1 || keys >= 1)) {
-            result.add("shield");
+        for (Buildable buildable : buildables) {
+            Map<String, Integer> hashmap = buildable.getRecipe();
+            boolean isBuildable = true;
+            boolean missingPrevKey = false;
+            boolean orConditionSatisfied = false;
+            for (String key : hashmap.keySet()) {
+                if (orConditionSatisfied) {
+                    orConditionSatisfied ^= true;
+                    continue;
+                }
+                if (key == "OR") {
+                    if (missingPrevKey) {
+                        // if the previous collectable was the item missing resets isbuildable
+                        isBuildable = true;
+                    } else if (isBuildable) orConditionSatisfied = true;
+                    // ^ If it is still buildable it means the previous or condition was satisfied
+                    // so the next iteration can be skipped
+                    continue;
+                }
+                missingPrevKey = false;
+                int invCount = hashmapCount(key);
+                if (invCount < hashmap.get(key)) {
+                    if (isBuildable) missingPrevKey = true;
+                    isBuildable = false;
+                }
+            }
+            if (isBuildable) result.add(buildable.getClass().getSimpleName().toLowerCase());
         }
         return result;
     }
@@ -88,6 +111,18 @@ public class Inventory {
         return count;
     }
 
+    public int hashmapCount(String itemType) {
+        int count = 0;
+        for (InventoryItem item : items) {
+            String itemClassString = item.getClass().getSimpleName();
+            if (itemClassString.equals(itemType)) {
+                count += 1;
+            }
+        }
+        return count;
+    }
+
+
     public Entity getEntity(String itemUsedId) {
         for (InventoryItem item : items)
             if (((Entity) item).getId().equals(itemUsedId)) return (Entity) item;
@@ -113,4 +148,7 @@ public class Inventory {
         return weapon;
     }
 
+    public List<InventoryItem> getItems() {
+        return items;
+    }
 }

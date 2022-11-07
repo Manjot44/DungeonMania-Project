@@ -3,6 +3,7 @@ package dungeonmania.entities;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.stream.Collectors;
 
 import dungeonmania.battles.BattleStatistics;
 import dungeonmania.battles.Battleable;
@@ -167,4 +168,26 @@ public class Player extends Entity implements Battleable, Overlappable {
     public BattleStatistics applyBuff(BattleStatistics origin) {
         return state.applyBuffState(origin);
     }
+
+    @Override
+    public double getHealth() {
+        battleStatistics.getHealth();
+        return 0;
+    }
+    @Override
+    public double setHealth(Double health) {
+        battleStatistics.setHealth(health);
+        return 0;
+    }
+    @Override
+    public boolean isEnabled() {
+        return battleStatistics.isEnabled();
+    }
+    public void setBattleStatistics(BattleStatistics battleStatistics) {
+        this.battleStatistics = battleStatistics;
+    }
+    public <T> List<T> getInventoryEntities(Class<T> clz) {
+        return inventory.getItems().stream().filter(clz::isInstance).map(clz::cast).collect(Collectors.toList());
+    }
+
 }

@@ -81,6 +81,17 @@ public class BattleStatistics {
                 buff.isEnabled());
     }
 
+    public static BattleStatistics removeBuff(BattleStatistics origin, BattleStatistics buff) {
+        return new BattleStatistics(
+                origin.health - buff.health,
+                origin.attack - buff.attack,
+                origin.defence - buff.defence,
+                origin.magnifier,
+                origin.reducer,
+                !buff.isInvincible(),
+                !buff.isEnabled());
+    }
+
     public double getHealth() {
         return health;
     }
