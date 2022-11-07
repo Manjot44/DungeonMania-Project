@@ -12,8 +12,9 @@ import dungeonmania.util.Position;
 
 public abstract class Enemy extends Entity implements Battleable, Overlappable, Destroyable {
     private BattleStatistics battleStatistics;
+    private Move movement;
 
-    public Enemy(Position position, double health, double attack) {
+    public Enemy(Position position, double health, double attack, Move movement) {
         super(position.asLayer(Entity.CHARACTER_LAYER));
         battleStatistics = new BattleStatistics(
                 health,
@@ -21,6 +22,7 @@ public abstract class Enemy extends Entity implements Battleable, Overlappable, 
                 0,
                 BattleStatistics.DEFAULT_DAMAGE_MAGNIFIER,
                 BattleStatistics.DEFAULT_ENEMY_DAMAGE_REDUCER);
+        this.movement = movement;
     }
 
     @Override
@@ -47,5 +49,11 @@ public abstract class Enemy extends Entity implements Battleable, Overlappable, 
         g.unsubscribe(getId());
     }
 
-    public abstract void move(Game game);
+    public void move(Game game) {
+        movement.moveEnemy(this, game);
+    }
+
+    public void setMovement(Move movement) {
+        this.movement = movement;
+    }
 }
