@@ -8,7 +8,7 @@ import dungeonmania.entities.enemies.ZombieToast;
 import dungeonmania.map.GameMap;
 import dungeonmania.util.Position;
 
-public class Portal extends Entity {
+public class Portal extends Entity implements Overlappable {
     private ColorCodedType color;
     private Portal pair;
 
@@ -31,6 +31,7 @@ public class Portal extends Entity {
         return neighbours.stream().allMatch(n -> map.canMoveTo(entity, n));
     }
 
+    @Override
     public void onOverlap(GameMap map, Entity entity) {
         if (pair == null)
             return;
