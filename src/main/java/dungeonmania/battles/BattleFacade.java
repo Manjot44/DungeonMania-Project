@@ -20,8 +20,8 @@ public class BattleFacade {
 
     public void battle(Game game, Player player, Enemy enemy) {
         // 0. init
-        double initialPlayerHealth = player.getBattleStatistics().getHealth();
-        double initialEnemyHealth = enemy.getBattleStatistics().getHealth();
+        double initialPlayerHealth = player.getHealth();
+        double initialEnemyHealth = enemy.getHealth();
         String enemyString = NameConverter.toSnakeCase(enemy);
 
 
@@ -34,32 +34,27 @@ public class BattleFacade {
         if (effectivePotion != null) {
             playerBuff = player.applyBuff(playerBuff);
         } else {
-            for (BattleItem item : player.getInventory().getEntities(BattleItem.class)) {
+            for (BattleItem item : player.getInventoryEntities(BattleItem.class)) {
                 playerBuff = item.applyBuff(playerBuff);
                 battleItems.add(item);
             }
         }
 
-        // 2. Battle the two stats
-        BattleStatistics playerBaseStatistics = player.getBattleStatistics();
-        BattleStatistics enemyBaseStatistics = enemy.getBattleStatistics();
-        BattleStatistics playerBattleStatistics = BattleStatistics.applyBuff(playerBaseStatistics, playerBuff);
-        BattleStatistics enemyBattleStatistics = enemyBaseStatistics;
-        if (!playerBattleStatistics.isEnabled() || !enemyBaseStatistics.isEnabled())
+        // 2. Battle the two stats, updating the stats as they are battled
+        player.setBattleStatistics(BattleStatistics.applyBuff(player.getBattleStatistics(), playerBuff));
+        if (!player.isEnabled() || !enemy.isEnabled())
             return;
-        List<BattleRound> rounds = BattleStatistics.battle(playerBattleStatistics, enemyBattleStatistics);
+        List<BattleRound> rounds = BattleStatistics.battle(player.getBattleStatistics(), enemy.getBattleStatistics());
+        // Removes temporary buff
+        player.setBattleStatistics(BattleStatistics.removeBuff(player.getBattleStatistics(), playerBuff));
 
-        // 3. update health to the actual statistics
-        player.getBattleStatistics().setHealth(playerBattleStatistics.getHealth());
-        enemy.getBattleStatistics().setHealth(enemyBattleStatistics.getHealth());
-
-        // 4. call to decrease durability of items
+        // 3. call to decrease durability of items
         for (BattleItem item : battleItems) {
             if (item instanceof InventoryItem)
                 item.use(game);
         }
 
-        // 5. Log the battle - solidate it to be a battle response
+        // 4. Log the battle - solidate it to be a battle response
         battleResponses.add(new BattleResponse(
                 enemyString,
                 rounds.stream()

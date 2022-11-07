@@ -49,6 +49,23 @@ public abstract class Enemy extends Entity implements Battleable, Overlappable, 
         g.unsubscribe(getId());
     }
 
+    @Override
+    public double getHealth() {
+        battleStatistics.getHealth();
+        return 0;
+    }
+
+    @Override
+    public double setHealth(Double health) {
+        battleStatistics.setHealth(health);
+        return 0;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return battleStatistics.isEnabled();
+    }
+
     public void move(Game game) {
         movement.moveEnemy(this, game);
     }
