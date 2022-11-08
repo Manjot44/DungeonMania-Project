@@ -128,6 +128,10 @@ public class EntityFactory {
         return new Shield(shieldDurability, shieldDefence);
     }
 
+    public Sunstone sunStone(Position pos) {
+        return new Sunstone(pos);
+    }
+
     private Entity constructEntity(JSONObject jsonEntity, JSONObject config) {
         Position pos = new Position(jsonEntity.getInt("x"), jsonEntity.getInt("y"));
 
@@ -178,6 +182,8 @@ public class EntityFactory {
             return new Door(pos, jsonEntity.getInt("key"));
         case "key":
             return new Key(pos, jsonEntity.getInt("key"));
+        case "sunstone":
+            return new Sunstone(pos);
         default:
             return null;
         }

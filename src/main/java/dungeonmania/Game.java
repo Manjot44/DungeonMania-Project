@@ -9,8 +9,8 @@ import dungeonmania.entities.Entity;
 import dungeonmania.entities.EntityFactory;
 import dungeonmania.entities.Interactable;
 import dungeonmania.entities.Player;
+import dungeonmania.entities.TreasureForGoal;
 import dungeonmania.entities.collectables.Bomb;
-import dungeonmania.entities.collectables.Treasure;
 import dungeonmania.entities.collectables.potions.Potion;
 import dungeonmania.entities.enemies.Enemy;
 import dungeonmania.exceptions.InvalidActionException;
@@ -25,7 +25,7 @@ public class Game {
     private GameMap map;
     private Player player;
     private BattleFacade battleFacade;
-    private int initialTreasureCount;
+    private int initialTreasureCount = 0;
     private EntityFactory entityFactory;
     private boolean isInTick = false;
     public static final int PLAYER_MOVEMENT = 0;
@@ -49,7 +49,11 @@ public class Game {
         this.tickCount = 0;
         player = map.getPlayer();
         register(() -> player.onTick(tickCount), PLAYER_MOVEMENT, "potionQueue");
-        initialTreasureCount = map.getEntities(Treasure.class).size();
+        List<Entity> entities = map.getEntities();
+        for (Entity entity : entities) {
+            if (entity instanceof TreasureForGoal) initialTreasureCount++;
+        }
+        //initialTreasureCount = map.getEntities(Treasure.class).size();
     }
 
     public Game tick(Direction movementDirection) {
