@@ -6,8 +6,8 @@ import dungeonmania.entities.inventory.InventoryItem;
 import dungeonmania.map.GameMap;
 import dungeonmania.util.Position;
 
-public class Treasure extends Entity implements InventoryItem, TreasureForGoal {
-    public Treasure(Position position) {
+public class Sunstone extends Entity implements InventoryItem, TreasureForGoal {
+    public Sunstone(Position position) {
         super(position);
     }
 

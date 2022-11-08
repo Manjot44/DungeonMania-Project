@@ -13,6 +13,7 @@ import dungeonmania.entities.buildables.Buildable;
 import dungeonmania.entities.buildables.Shield;
 import dungeonmania.entities.collectables.Arrow;
 import dungeonmania.entities.collectables.Key;
+import dungeonmania.entities.collectables.Sunstone;
 import dungeonmania.entities.collectables.Sword;
 import dungeonmania.entities.collectables.Treasure;
 import dungeonmania.entities.collectables.Wood;
@@ -41,6 +42,7 @@ public class Inventory {
             boolean isBuildable = true;
             boolean missingPrevKey = false;
             boolean orConditionSatisfied = false;
+            boolean buildingSubstituteUsed = false;
             for (String key : hashmap.keySet()) {
                 if (orConditionSatisfied) {
                     orConditionSatisfied ^= true;
@@ -50,14 +52,21 @@ public class Inventory {
                     if (missingPrevKey) {
                         // if the previous collectable was the item missing resets isbuildable
                         isBuildable = true;
+                        missingPrevKey = false;
                     } else if (isBuildable) orConditionSatisfied = true;
                     // ^ If it is still buildable it means the previous or condition was satisfied
                     // so the next iteration can be skipped
                     continue;
-                }
-                missingPrevKey = false;
+                } else if (missingPrevKey) break;
+                //missingPrevKey = false;
                 int invCount = hashmapCount(key);
                 if (invCount < hashmap.get(key)) {
+                    if (!buildingSubstituteUsed) {
+                        if (checkBuildingSubstituteExist(key)) {
+                            buildingSubstituteUsed = true;
+                            continue;
+                        }
+                    }
                     if (isBuildable) missingPrevKey = true;
                     isBuildable = false;
                 }
@@ -73,6 +82,7 @@ public class Inventory {
         List<Arrow> arrows = getEntities(Arrow.class);
         List<Treasure> treasure = getEntities(Treasure.class);
         List<Key> keys = getEntities(Key.class);
+        List<Sunstone> sunstone = getEntities(Sunstone.class);
 
         if (wood.size() >= 1 && arrows.size() >= 3 && !forceShield) {
             if (remove) {
@@ -83,11 +93,13 @@ public class Inventory {
             }
             return factory.buildBow();
 
-        } else if (wood.size() >= 2 && (treasure.size() >= 1 || keys.size() >= 1)) {
+        } else if (wood.size() >= 2 && (treasure.size() >= 1 || keys.size() >= 1 || sunstone.size() >= 1)) {
             if (remove) {
                 items.remove(wood.get(0));
                 items.remove(wood.get(1));
-                if (treasure.size() >= 1) {
+                if (sunstone.size() >= 1) {
+                    return factory.buildShield();
+                } else if (treasure.size() >= 1) {
                     items.remove(treasure.get(0));
                 } else {
                     items.remove(keys.get(0));
@@ -96,6 +108,16 @@ public class Inventory {
             return factory.buildShield();
         }
         return null;
+    }
+
+    private boolean checkBuildingSubstituteExist(String key) {
+        if (key == "Treasure" || key == "Key") {
+            for (InventoryItem item : items) {
+                System.out.println(item.getClass().getSimpleName());
+                if (item instanceof Sunstone) return true;
+            }
+        }
+        return false;
     }
 
     public <T extends InventoryItem> T getFirst(Class<T> itemType) {
