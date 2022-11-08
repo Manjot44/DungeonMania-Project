@@ -125,4 +125,22 @@ public class BasicGoalsTest {
         // assert goal met
         assertEquals("", TestUtils.getGoals(res));
     }
+
+    @Test
+    @Tag("13-5")
+    @DisplayName("Test achieving enemies goal with 2 enemies (no spawners)")
+    public void twoEnemies() {
+    }
+
+    @Test
+    @Tag("13-6")
+    @DisplayName("Test achieving enemies goal with enemies and spawners")
+    public void enemySpawners() {
+    }
+
+    @Test
+    @Tag("13-7")
+    @DisplayName("Test invalid enemy_goal in config file")
+    public void inValidEnemy() {
+    }
 }
