@@ -63,7 +63,7 @@ public class Mercenary extends Enemy implements Interactable {
     public void interact(Player player, Game game) {
         allied = true;
         bribe(player);
-        setMovement(new ZombieMove());
+        setMovement(new AllyMove(player));
     }
 
     @Override
