@@ -53,12 +53,12 @@ public class Player extends Entity implements Battleable, Overlappable {
         return inventory.getWeapon();
     }
 
-    public List<String> getBuildables() {
-        return inventory.getBuildables();
+    public List<String> getBuildables(GameMap map) {
+        return inventory.getBuildables(map);
     }
 
-    public boolean build(String entity, EntityFactory factory) {
-        InventoryItem item = inventory.checkBuildCriteria(this, true, entity.equals("shield"), factory);
+    public boolean build(GameMap map, String entity, EntityFactory factory) {
+        InventoryItem item = inventory.checkBuildCriteria(this, true, entity.equals("shield"), factory, entity, map);
         if (item == null) return false;
         return inventory.add(item);
     }
@@ -190,4 +190,7 @@ public class Player extends Entity implements Battleable, Overlappable {
         return inventory.getItems().stream().filter(clz::isInstance).map(clz::cast).collect(Collectors.toList());
     }
 
+    public <T extends InventoryItem> T getFirstInventoryItem(Class<T> itemType) {
+        return inventory.getFirst(itemType);
+    }
 }

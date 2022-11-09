@@ -4,6 +4,7 @@ import dungeonmania.Game;
 import dungeonmania.entities.Entity;
 import dungeonmania.entities.Interactable;
 import dungeonmania.entities.Player;
+import dungeonmania.entities.buildables.Sceptre;
 import dungeonmania.entities.collectables.Treasure;
 import dungeonmania.map.GameMap;
 import dungeonmania.util.Position;
@@ -17,6 +18,7 @@ public class Mercenary extends Enemy implements Interactable {
     private int bribeAmount = Mercenary.DEFAULT_BRIBE_AMOUNT;
     private int bribeRadius = Mercenary.DEFAULT_BRIBE_RADIUS;
     private boolean allied = false;
+    private int mindControlduration = -1;
 
     public Mercenary(Position position, double health, double attack, int bribeAmount, int bribeRadius) {
         super(position, health, attack, new HostileMove());
@@ -47,10 +49,14 @@ public class Mercenary extends Enemy implements Interactable {
      * bribe the merc
      */
     private void bribe(Player player) {
+        if (player.countEntityOfType(Sceptre.class) > 0) {
+            Sceptre sceptre = player.getFirstInventoryItem(Sceptre.class);
+            mindControlduration = sceptre.getDuration();
+            return;
+        }
         for (int i = 0; i < bribeAmount; i++) {
             player.use(Treasure.class);
         }
-
     }
 
     @Override
@@ -62,6 +68,21 @@ public class Mercenary extends Enemy implements Interactable {
 
     @Override
     public boolean isInteractable(Player player) {
-        return !allied && canBeBribed(player);
+        return (!allied && (canBeBribed(player) || canBeMindControlled(player)));
+    }
+
+    private boolean canBeMindControlled(Player player) {
+        //return true;
+        if (player.countEntityOfType(Sceptre.class) > 0) return true;
+        return false;
+    }
+
+    public void mindControlTick() {
+        if (mindControlduration >= 0) {
+            mindControlduration--;
+            if (mindControlduration < 0) {
+                allied = false;
+            }
+        }
     }
 }
