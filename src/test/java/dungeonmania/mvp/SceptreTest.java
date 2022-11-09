@@ -187,6 +187,11 @@ public class SceptreTest {
         res = dmc.tick(Direction.NONE);
         res = dmc.tick(Direction.RIGHT);
         res = dmc.tick(Direction.RIGHT);
+        res = dmc.tick(Direction.NONE);
+        res = dmc.tick(Direction.NONE);
+        res = dmc.tick(Direction.NONE);
+        res = dmc.tick(Direction.NONE);
+        res = dmc.tick(Direction.NONE);
 
         //check if they fought
         assertTrue(res.getBattles().size() != 0);
