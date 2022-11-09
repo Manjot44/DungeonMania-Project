@@ -28,6 +28,9 @@ public class GoalFactory {
         case "treasure":
             int treasureGoal = config.optInt("treasure_goal", 1);
             return new Goal("treasure", treasureGoal);
+        case "enemies":
+            int enemiesGoal = config.optInt("enemy_goal", 1);
+            return new Goal("enemies", enemiesGoal);
         default:
             return null;
         }

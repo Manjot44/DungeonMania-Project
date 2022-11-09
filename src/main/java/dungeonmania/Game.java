@@ -24,6 +24,7 @@ public class Game {
     private Goal goals;
     private GameMap map;
     private Player player;
+    private int destroyedEnemies = 0;
     private BattleFacade battleFacade;
     private int initialTreasureCount;
     private EntityFactory entityFactory;
@@ -88,6 +89,7 @@ public class Game {
         }
         if (enemy.getBattleStatistics().getHealth() <= 0) {
             map.destroyEntity(enemy);
+            destroyedEnemies++;
         }
     }
 
@@ -225,4 +227,7 @@ public class Game {
         return initialTreasureCount;
     }
 
+    public int getDestroyedEnemies() {
+        return destroyedEnemies;
+    }
 }
