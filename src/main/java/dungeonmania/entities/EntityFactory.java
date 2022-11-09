@@ -2,6 +2,8 @@ package dungeonmania.entities;
 
 import dungeonmania.Game;
 import dungeonmania.entities.buildables.Bow;
+import dungeonmania.entities.buildables.MidnightArmour;
+import dungeonmania.entities.buildables.Sceptre;
 import dungeonmania.entities.buildables.Shield;
 import dungeonmania.entities.collectables.*;
 import dungeonmania.entities.collectables.Sword;
@@ -130,6 +132,17 @@ public class EntityFactory {
 
     public Sunstone sunStone(Position pos) {
         return new Sunstone(pos);
+    }
+
+    public Sceptre buildSceptre() {
+        int duration = config.optInt("mind_control_duration");
+        return new Sceptre(duration);
+    }
+
+    public MidnightArmour buildMidnightArmour() {
+        int attackBuff = config.optInt("midnight_armour_attack");
+        int defenseBuff = config.optInt("midnight_armour_defence");
+        return new MidnightArmour(attackBuff, defenseBuff);
     }
 
     private Entity constructEntity(JSONObject jsonEntity, JSONObject config) {

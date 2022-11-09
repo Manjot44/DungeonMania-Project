@@ -45,6 +45,14 @@ public class BuildablesTest {
         assertThrows(InvalidActionException.class, () ->
                 dmc.build("shield")
         );
+
+        assertThrows(InvalidActionException.class, () ->
+                dmc.build("sceptre")
+        );
+
+        assertThrows(InvalidActionException.class, () ->
+                dmc.build("midnight_armour")
+        );
     }
 
     @Test

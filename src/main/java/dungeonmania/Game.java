@@ -13,6 +13,7 @@ import dungeonmania.entities.TreasureForGoal;
 import dungeonmania.entities.collectables.Bomb;
 import dungeonmania.entities.collectables.potions.Potion;
 import dungeonmania.entities.enemies.Enemy;
+import dungeonmania.entities.enemies.Mercenary;
 import dungeonmania.exceptions.InvalidActionException;
 import dungeonmania.goals.Goal;
 import dungeonmania.map.GameMap;
@@ -98,11 +99,11 @@ public class Game {
     }
 
     public Game build(String buildable) throws InvalidActionException {
-        List<String> buildables = player.getBuildables();
+        List<String> buildables = player.getBuildables(map);
         if (!buildables.contains(buildable)) {
             throw new InvalidActionException(String.format("%s cannot be built", buildable));
         }
-        registerOnce(() -> player.build(buildable, entityFactory), PLAYER_MOVEMENT, "playerBuildsItem");
+        registerOnce(() -> player.build(map, buildable, entityFactory), PLAYER_MOVEMENT, "playerBuildsItem");
         tick();
         return this;
     }
@@ -158,9 +159,19 @@ public class Game {
         sub.addAll(addingSub);
         addingSub = new PriorityQueue<>();
         sub.removeIf(s -> !s.isValid());
+        additionalTickFunctions();
         tickCount++;
         // update the weapons/potions duration
         return tickCount;
+    }
+
+    private void additionalTickFunctions() {
+        List<Entity> entities = map.getEntities();
+        for (Entity entity : entities) {
+            if (entity instanceof Mercenary) {
+                ((Mercenary) entity).mindControlTick();
+            }
+        }
     }
 
     public void spawnEntityFromFactory(String toSpawn, Entity configEntities) {
