@@ -6,6 +6,7 @@ import dungeonmania.Game;
 import dungeonmania.goals.GoalConditions.BothGoals;
 import dungeonmania.goals.GoalConditions.BouldersGoal;
 import dungeonmania.goals.GoalConditions.EitherGoals;
+import dungeonmania.goals.GoalConditions.EnemiesGoal;
 import dungeonmania.goals.GoalConditions.ExitGoal;
 import dungeonmania.goals.GoalConditions.TreasureGoal;
 
@@ -19,6 +20,7 @@ public class Goal {
         put("exit", new ExitGoal());
         put("boulders", new BouldersGoal());
         put("treasure", new TreasureGoal());
+        put("enemies", new EnemiesGoal());
         put("AND", new BothGoals());
         put("OR", new EitherGoals());
     }};

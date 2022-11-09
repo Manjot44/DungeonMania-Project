@@ -130,17 +130,71 @@ public class BasicGoalsTest {
     @Tag("13-5")
     @DisplayName("Test achieving enemies goal with 2 enemies (no spawners)")
     public void twoEnemies() {
+        DungeonManiaController dmc;
+        dmc = new DungeonManiaController();
+        DungeonResponse res = dmc.newGame("d_enemyGoalTest", "c_enemyGoalTest");
+
+        String mercId = TestUtils.getEntitiesStream(res, "mercenary").findFirst().get().getId();
+
+        // move player to the right and collect treasure
+        res = dmc.tick(Direction.LEFT);
+
+        // bribe a mercenary
+        res = assertDoesNotThrow(() -> dmc.interact(mercId));
+
+        // kill a spider ans assert goal not met
+        res = dmc.tick(Direction.LEFT);
+        assertTrue(TestUtils.getGoals(res).contains(":enemies"));
+
+        // kill the second mercenary and assert goal met
+        res = dmc.tick(Direction.RIGHT);
+        res = dmc.tick(Direction.RIGHT);
+        res = dmc.tick(Direction.RIGHT);
+        res = dmc.tick(Direction.RIGHT);
+
+        assertEquals("", TestUtils.getGoals(res));
     }
 
     @Test
     @Tag("13-6")
     @DisplayName("Test achieving enemies goal with enemies and spawners")
     public void enemySpawners() {
+        DungeonManiaController dmc;
+        dmc = new DungeonManiaController();
+        DungeonResponse res = dmc.newGame("d_spawnerGoalTest", "c_spawnerGoalTest");
+
+        String spawnerId = TestUtils.getEntitiesStream(res, "zombie_toast_spawner").findFirst().get().getId();
+
+        // move player to the right, kill spider and pick up sword
+        res = dmc.tick(Direction.LEFT);
+        res = dmc.tick(Direction.LEFT);
+
+        // assert goal not met
+        assertTrue(TestUtils.getGoals(res).contains(":enemies"));
+
+        // destroy the spawner
+        res = dmc.tick(Direction.LEFT);
+        res = dmc.tick(Direction.LEFT);
+        res = assertDoesNotThrow(() -> dmc.interact(spawnerId));
+
+        // assert goal met
+        assertEquals("", TestUtils.getGoals(res));
     }
 
     @Test
     @Tag("13-7")
-    @DisplayName("Test invalid enemy_goal in config file")
-    public void inValidEnemy() {
+    @DisplayName("Test no enemy_goal in config file")
+    public void noEnemyGoal() {
+        DungeonManiaController dmc;
+        dmc = new DungeonManiaController();
+        DungeonResponse res = dmc.newGame("d_enemyGoalTest", "c_basicGoalsTest_enemy");
+
+        // assert goal not met
+        assertTrue(TestUtils.getGoals(res).contains(":enemies"));
+
+        // kill spider and assert goal met
+        res = dmc.tick(Direction.LEFT);
+        res = dmc.tick(Direction.LEFT);
+        assertEquals("", TestUtils.getGoals(res));
     }
 }
