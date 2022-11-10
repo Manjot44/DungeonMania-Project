@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class AssassinTest {
     @Test
-    @Tag("12-2")
+    @Tag("12-1")
     @DisplayName("Test assassin with 0 bribe fail rate")
     public void noFailRate() {
         DungeonManiaController dmc = new DungeonManiaController();
