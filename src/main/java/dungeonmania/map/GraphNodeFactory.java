@@ -32,6 +32,7 @@ public class GraphNodeFactory {
         case "key":
         case "sunstone":
         case "sceptre":
+        case "swamp_tile":
             return new GraphNode(factory.createEntity(jsonEntity));
         default:
             return null;

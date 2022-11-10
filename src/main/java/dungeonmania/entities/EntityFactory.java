@@ -197,6 +197,9 @@ public class EntityFactory {
             return new Key(pos, jsonEntity.getInt("key"));
         case "sunstone":
             return new Sunstone(pos);
+        case "swamp_tile":
+            int slowDuration = jsonEntity.getInt("movement_factor");
+            return new SwampTile(pos, slowDuration);
         default:
             return null;
         }

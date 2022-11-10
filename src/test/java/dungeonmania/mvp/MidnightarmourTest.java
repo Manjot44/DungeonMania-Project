@@ -21,8 +21,6 @@ public class MidnightarmourTest {
         DungeonManiaController dmc = new DungeonManiaController();
         DungeonResponse res = dmc.newGame("d_MidnightArmourTest_noZombies", "c_MidnightarmourTest_buff");
 
-        String mercId = TestUtils.getEntitiesStream(res, "mercenary").findFirst().get().getId();
-
         // pick up sword
         res = dmc.tick(Direction.RIGHT);
         assertEquals(1, TestUtils.getInventory(res, "sword").size());
