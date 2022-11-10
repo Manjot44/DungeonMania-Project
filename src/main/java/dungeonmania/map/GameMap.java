@@ -14,9 +14,11 @@ import dungeonmania.entities.MovedAwayable;
 import dungeonmania.entities.Overlappable;
 import dungeonmania.entities.Player;
 import dungeonmania.entities.Portal;
+import dungeonmania.entities.SwampTile;
 import dungeonmania.entities.Switch;
 import dungeonmania.entities.collectables.Bomb;
 import dungeonmania.entities.enemies.Enemy;
+import dungeonmania.entities.enemies.Mercenary;
 import dungeonmania.entities.enemies.ZombieToastSpawner;
 import dungeonmania.entities.inventory.InventoryItem;
 import dungeonmania.util.Direction;
@@ -88,21 +90,49 @@ public class GameMap {
 
     public void moveTo(Entity entity, Position position) {
         if (!canMoveTo(entity, position)) return;
-
+        if (hasSwampSlowTick(entity)) return;
         triggerMovingAwayEvent(entity);
         removeNode(entity);
         entity.setPosition(position);
         addEntity(entity);
+        updateSwampImmunes();
         triggerOverlapEvent(entity);
     }
 
     public void moveTo(Entity entity, Direction direction) {
         if (!canMoveTo(entity, Position.translateBy(entity.getPosition(), direction))) return;
+        if (hasSwampSlowTick(entity)) return;
         triggerMovingAwayEvent(entity);
         removeNode(entity);
         entity.translate(direction);
         addEntity(entity);
+        updateSwampImmunes();
         triggerOverlapEvent(entity);
+    }
+
+    private boolean hasSwampSlowTick(Entity entity) {
+        if (entity.getFrozenInPlaceForXTicks() > 0) {
+            entity.setFrozenInPlaceForXTicks(entity.getFrozenInPlaceForXTicks() - 1);
+            return true;
+        }
+        return false;
+    }
+
+    private void updateSwampImmunes() {
+        Position playerPos = player.getPosition();
+        // Can be updated to ally upon introduction of additional allies excluding assassin
+        List<Mercenary> bribeableEntities = getEntities(Mercenary.class);
+        List<SwampTile> swampTiles = getEntities(SwampTile.class);
+
+        for (Mercenary bribable: bribeableEntities) {
+            for (SwampTile swampTile: swampTiles) {
+                if (Position.isAdjacent(playerPos, bribable.getPosition())) {
+                    swampTile.addImmuneEntity(bribable);
+                } else {
+                    swampTile.removeImmuneEntity(bribable);
+                }
+            }
+        }
     }
 
     private void triggerMovingAwayEvent(Entity entity) {

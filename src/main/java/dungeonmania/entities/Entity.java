@@ -17,6 +17,7 @@ public abstract class Entity {
     private Position previousDistinctPosition;
     private Direction facing;
     private String entityId;
+    private int frozenInPlaceForXTicks = 0;
 
     public Entity(Position position) {
         this.position = position;
@@ -76,5 +77,11 @@ public abstract class Entity {
 
     public Direction getFacing() {
         return this.facing;
+    }
+    public int getFrozenInPlaceForXTicks() {
+        return frozenInPlaceForXTicks;
+    }
+    public void setFrozenInPlaceForXTicks(int frozenInPlaceForXTicks) {
+        this.frozenInPlaceForXTicks = frozenInPlaceForXTicks;
     }
 }
