@@ -23,7 +23,7 @@ public class Assassin extends Mercenary {
 
 
     @Override
-    public void bribe(Player player) {
+    protected void bribe(Player player) {
         Random rand = new Random();
         if (player.countEntityOfType(Sceptre.class) > 0) {
             Sceptre sceptre = player.getFirstInventoryItem(Sceptre.class);

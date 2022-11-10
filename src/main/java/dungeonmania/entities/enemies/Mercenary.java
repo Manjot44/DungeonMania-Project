@@ -51,7 +51,7 @@ public class Mercenary extends Enemy implements Interactable {
     /**
      * bribe the merc
      */
-    public void bribe(Player player) {
+    protected void bribe(Player player) {
         if (player.countEntityOfType(Sceptre.class) > 0) {
             Sceptre sceptre = player.getFirstInventoryItem(Sceptre.class);
             mindControlduration = sceptre.getDuration();
