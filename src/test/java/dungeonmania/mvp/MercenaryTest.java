@@ -138,6 +138,11 @@ public class MercenaryTest {
         assertEquals(1, TestUtils.getInventory(res, "treasure").size());
         assertEquals(new Position(7, 1), getMercPos(res));
 
+        // New merc test fix, was previously not in radius so now move to go into radius
+        res = dmc.tick(Direction.RIGHT);
+        res = dmc.tick(Direction.RIGHT);
+        assertEquals(new Position(5, 1), getMercPos(res));
+
         // attempt bribe
         assertDoesNotThrow(() -> dmc.interact(mercId));
         assertEquals(1, TestUtils.getInventory(res, "treasure").size());
@@ -231,6 +236,28 @@ public class MercenaryTest {
         // check special condition where ally has to move two squares
         res = dmc.tick(Direction.RIGHT);
         assertEquals(new Position(0, 1), getMercPos(res));
+    }
+
+    @Test
+    @Tag("12-6")
+    @DisplayName("Testing a mercenary cannot be bribed outside of radius")
+    public void bribeOutsideRadius() {
+        //                                         Wall     Wall    Wall    Wall  Wall
+        // P1       P2/Treasure      P3    P4      M4       M3       M2     M1    Wall
+        //                                         Wall     Wall    Wall    Wall  Wall
+        DungeonManiaController dmc = new DungeonManiaController();
+        DungeonResponse res = dmc.newGame("d_mercenaryTest_bribeRadius", "c_mercenaryTest_bribeRadius0");
+
+        String mercId = TestUtils.getEntitiesStream(res, "mercenary").findFirst().get().getId();
+
+        // pick up treasure
+        res = dmc.tick(Direction.RIGHT);
+        assertEquals(1, TestUtils.getInventory(res, "treasure").size());
+        assertEquals(new Position(7, 1), getMercPos(res));
+
+        // attempt bribe
+        assertThrows(InvalidActionException.class, () -> dmc.interact(mercId));
+        assertEquals(1, TestUtils.getInventory(res, "treasure").size());
     }
 
     private Position getMercPos(DungeonResponse res) {

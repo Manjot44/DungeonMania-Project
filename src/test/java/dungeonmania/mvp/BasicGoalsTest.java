@@ -142,7 +142,7 @@ public class BasicGoalsTest {
         // bribe a mercenary
         res = assertDoesNotThrow(() -> dmc.interact(mercId));
 
-        // kill a spider ans assert goal not met
+        // kill a spider and assert goal not met
         res = dmc.tick(Direction.LEFT);
         assertTrue(TestUtils.getGoals(res).contains(":enemies"));
 

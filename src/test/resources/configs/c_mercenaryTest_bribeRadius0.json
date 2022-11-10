@@ -4,7 +4,7 @@
   "bomb_radius": 1,
   "bow_durability": 2,
   "bribe_amount": 1,
-  "bribe_radius": 10,
+  "bribe_radius": 2,
   "invincibility_potion_duration": 1,
   "invisibility_potion_duration": 1,
   "mercenary_attack": 5,
@@ -21,6 +21,5 @@
   "treasure_goal": 1,
   "zombie_attack": 5,
   "zombie_health": 5,
-  "zombie_spawn_interval": 0,
-  "enemy_goal": 2
+  "zombie_spawn_interval": 0
 }

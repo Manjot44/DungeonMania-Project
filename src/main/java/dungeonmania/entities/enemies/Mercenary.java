@@ -42,6 +42,9 @@ public class Mercenary extends Enemy implements Interactable {
      * @return
      */
     private boolean canBeBribed(Player player) {
+        //check if player is in merc radius
+        if (!(Math.abs(player.getPositionX() - this.getPosition().getX()) <= bribeRadius)) return false;
+        if (!(Math.abs(player.getPositionY() - this.getPosition().getY()) <= bribeRadius)) return false;
         return bribeRadius >= 0 && player.countEntityOfType(Treasure.class) >= bribeAmount;
     }
 
@@ -82,6 +85,7 @@ public class Mercenary extends Enemy implements Interactable {
             mindControlduration--;
             if (mindControlduration < 0) {
                 allied = false;
+                super.setMovement(new HostileMove());
             }
         }
     }
