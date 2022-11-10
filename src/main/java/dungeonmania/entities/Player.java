@@ -193,4 +193,63 @@ public class Player extends Entity implements Battleable, Overlappable {
     public <T extends InventoryItem> T getFirstInventoryItem(Class<T> itemType) {
         return inventory.getFirst(itemType);
     }
+
+    public double setAttack(Double attack) {
+        battleStatistics.setHealth(attack);
+        return 0;
+    }
+    public double getAttack() {
+        battleStatistics.getAttack();
+        return 0;
+    }
+    public Queue<Potion> getQueue() {
+        return queue;
+    }
+    public Potion getInEffective() {
+        return inEffective;
+    }
+    public PlayerState getState() {
+        return state;
+    }
+    public int getNextTrigger() {
+        return nextTrigger;
+    }
+    public void setInventory(Inventory inventory) {
+        this.inventory = inventory;
+    }
+    public void setQueue(Queue<Potion> queue) {
+        this.queue = queue;
+    }
+    public void setInEffective(Potion inEffective) {
+        this.inEffective = inEffective;
+    }
+    public void setNextTrigger(int nextTrigger) {
+        this.nextTrigger = nextTrigger;
+    }
+    public void setState(PlayerState state) {
+        this.state = state;
+    }
+
+    public Player clone(Player player) {
+        BattleStatistics battleStats = new BattleStatistics(player.getHealth(), player.getAttack(), 1, 1, 1);
+        Inventory inventoryToAdd = new Inventory();
+        inventoryToAdd.setItems(inventory.getItems());
+        player.setPosition(this.getPosition());
+        player.setHealth(this.getHealth());
+        player.setAttack(this.getAttack());
+        player.setBattleStatistics(battleStats);
+        player.setInventory(inventoryToAdd);
+        player.setQueue(queue);
+        player.setInEffective(inEffective);
+        player.setNextTrigger(nextTrigger);
+        player.setState(state);
+        return player;
+    }
+
+    public int getPositionX() {
+        return this.getPosition().getX();
+    }
+    public int getPositionY() {
+        return this.getPosition().getY();
+    }
 }

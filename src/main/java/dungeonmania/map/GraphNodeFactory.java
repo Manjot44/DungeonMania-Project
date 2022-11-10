@@ -33,6 +33,8 @@ public class GraphNodeFactory {
         case "sunstone":
         case "sceptre":
         case "swamp_tile":
+        case "time_turner":
+        case "time_travelling_portal":
             return new GraphNode(factory.createEntity(jsonEntity));
         default:
             return null;

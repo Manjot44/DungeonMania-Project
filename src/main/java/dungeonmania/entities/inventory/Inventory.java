@@ -221,4 +221,7 @@ public class Inventory {
     public List<InventoryItem> getItems() {
         return items;
     }
+    public void setItems(List<InventoryItem> items) {
+        this.items = items;
+    }
 }

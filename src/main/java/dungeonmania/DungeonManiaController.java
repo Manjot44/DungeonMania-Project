@@ -130,7 +130,7 @@ public class DungeonManiaController {
      * /game/rewind
      */
     public DungeonResponse rewind(int ticks) throws IllegalArgumentException {
-        return null;
+        return ResponseBuilder.getDungeonResponse(game.rewindTime(ticks));
     }
 
 }

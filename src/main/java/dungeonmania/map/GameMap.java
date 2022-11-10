@@ -30,6 +30,9 @@ public class GameMap {
     private Map<Position, GraphNode> nodes = new HashMap<>();
     private Player player;
 
+    public void copy(Map<Position, GraphNode> map) {
+        map.putAll(nodes);
+    }
     /**
      * Initialise the game map
      * 1. pair up portals
@@ -314,5 +317,11 @@ public class GameMap {
 
     public void setGame(Game game) {
         this.game = game;
+    }
+    public Map<Position, GraphNode> getNodes() {
+        return nodes;
+    }
+    public void setNodes(Map<Position, GraphNode> nodes) {
+        this.nodes = nodes;
     }
 }

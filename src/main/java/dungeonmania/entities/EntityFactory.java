@@ -42,6 +42,8 @@ public class EntityFactory {
             case "zombie":
                 spawnZombie(game, (ZombieToastSpawner) additionalEntities);
                 return;
+            case "old_player":
+                spawnOldPlayer(game, (Player) additionalEntities);
         }
     }
 
@@ -145,6 +147,15 @@ public class EntityFactory {
         return new MidnightArmour(attackBuff, defenseBuff);
     }
 
+    public OldPlayer spawnOldPlayer(Game game, Player player) {
+        GameMap map = game.getMap();
+        OldPlayer oldPlayer = new OldPlayer(player.getPosition(), player.getHealth(),
+            player.getAttack(), player.getBattleStatistics(), player.getInventory(),
+            player.getQueue(), player.getInEffective(), player.getNextTrigger(), player.getState());
+        map.addEntity(oldPlayer);
+        return oldPlayer;
+    }
+
     private Entity constructEntity(JSONObject jsonEntity, JSONObject config) {
         Position pos = new Position(jsonEntity.getInt("x"), jsonEntity.getInt("y"));
 
@@ -200,6 +211,10 @@ public class EntityFactory {
         case "swamp_tile":
             int slowDuration = jsonEntity.getInt("movement_factor");
             return new SwampTile(pos, slowDuration);
+        case "time_turner":
+            return new TimeTurner(pos);
+        case "time_travelling_portal":
+            return new TimeTravellingPortal(pos);
         default:
             return null;
         }

@@ -1,6 +1,9 @@
 package dungeonmania;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.UUID;
 
@@ -8,6 +11,7 @@ import dungeonmania.battles.BattleFacade;
 import dungeonmania.entities.Entity;
 import dungeonmania.entities.EntityFactory;
 import dungeonmania.entities.Interactable;
+import dungeonmania.entities.OldPlayer;
 import dungeonmania.entities.Player;
 import dungeonmania.entities.TreasureForGoal;
 import dungeonmania.entities.collectables.Bomb;
@@ -17,7 +21,9 @@ import dungeonmania.entities.enemies.Mercenary;
 import dungeonmania.exceptions.InvalidActionException;
 import dungeonmania.goals.Goal;
 import dungeonmania.map.GameMap;
+import dungeonmania.map.GraphNode;
 import dungeonmania.util.Direction;
+import dungeonmania.util.Position;
 
 public class Game {
     private String id;
@@ -38,6 +44,11 @@ public class Game {
     private int tickCount = 0;
     private PriorityQueue<ComparableCallback> sub = new PriorityQueue<>();
     private PriorityQueue<ComparableCallback> addingSub = new PriorityQueue<>();
+    private ArrayList<String> playerActionHistory = new ArrayList<>();
+    private ArrayList<Direction> directionHistory = new ArrayList<>();
+    private ArrayList<String> buildablesAndIdsHistory = new ArrayList<>();
+    private ArrayList<GameMap> mapsHistory = new ArrayList<>();
+    private ArrayList<Player> playersHistory = new ArrayList<>();
 
     public Game(String dungeonName) {
         this.name = dungeonName;
@@ -55,17 +66,35 @@ public class Game {
         for (Entity entity : entities) {
             if (entity instanceof TreasureForGoal) initialTreasureCount++;
         }
-        //initialTreasureCount = map.getEntities(Treasure.class).size();
     }
 
     public Game tick(Direction movementDirection) {
+        updateDirectionTick(movementDirection);
         registerOnce(
             () -> player.move(this.getMap(), movementDirection), PLAYER_MOVEMENT, "playerMoves");
         tick();
         return this;
     }
 
+    private void updateDirectionTick(Direction movementDirection) {
+        updateTimeTravelTickState();
+        playerActionHistory.add("move");
+        directionHistory.add(movementDirection);
+    }
+
+    private void updateTimeTravelTickState() {
+        GameMap mapToAdd = new GameMap();
+        Map<Position, GraphNode> nodes = new HashMap<>();
+        nodes.putAll(map.getNodes());
+        mapToAdd.setNodes(map.getNodes());
+        mapsHistory.add(mapToAdd);
+        Player playerToAdd = new Player(player.getPosition(), 0, 0);
+        player.clone(playerToAdd);
+        playersHistory.add(playerToAdd);
+    }
+
     public Game tick(String itemUsedId) throws InvalidActionException {
+        updateUseItemTick(itemUsedId);
         Entity item = player.getEntity(itemUsedId);
         if (item == null)
             throw new InvalidActionException(String.format("Item with id %s doesn't exist", itemUsedId));
@@ -82,12 +111,18 @@ public class Game {
         return this;
     }
 
+    private void updateUseItemTick(String itemUsedId) {
+        playerActionHistory.add("use");
+        buildablesAndIdsHistory.add(itemUsedId);
+    }
+
     /**
      * Battle between player and enemy
      * @param player
      * @param enemy
      */
     public void battle(Player player, Enemy enemy) {
+        if (player instanceof OldPlayer) return;
         battleFacade.battle(this, player, enemy);
         if (player.getBattleStatistics().getHealth() <= 0) {
             map.destroyEntity(player);
@@ -99,6 +134,7 @@ public class Game {
     }
 
     public Game build(String buildable) throws InvalidActionException {
+        updateBuildTick(buildable);
         List<String> buildables = player.getBuildables(map);
         if (!buildables.contains(buildable)) {
             throw new InvalidActionException(String.format("%s cannot be built", buildable));
@@ -108,7 +144,13 @@ public class Game {
         return this;
     }
 
+    private void updateBuildTick(String buildable) {
+        playerActionHistory.add("build");
+        buildablesAndIdsHistory.add(buildable);
+    }
+
     public Game interact(String entityId) throws IllegalArgumentException, InvalidActionException {
+        updateInteractTick(entityId);
         Entity e = map.getEntity(entityId);
         if (e == null || !(e instanceof Interactable))
             throw new IllegalArgumentException("Entity cannot be interacted");
@@ -119,6 +161,11 @@ public class Game {
             () -> ((Interactable) e).interact(player, this), PLAYER_MOVEMENT, "playerBuildsItem");
         tick();
         return this;
+    }
+
+    private void updateInteractTick(String entityId) {
+        playerActionHistory.add("interact");
+        buildablesAndIdsHistory.add(entityId);
     }
 
     public <T extends Entity> long countEntities(Class<T> type) {
@@ -171,7 +218,27 @@ public class Game {
             if (entity instanceof Mercenary) {
                 ((Mercenary) entity).mindControlTick();
             }
+            if (entity instanceof OldPlayer) {
+                ((OldPlayer) entity).oldPlayerTick(map);
+            }
         }
+    }
+
+    public Game rewindTime(int numberOfTicks) {
+        int targetTickNum = tickCount - numberOfTicks;
+        if (targetTickNum < 0) targetTickNum = 0;
+        map = mapsHistory.get(targetTickNum);
+        map.setGame(this);
+        map.setPlayer(player);
+        entityFactory.spawnEntity("old_player", this, playersHistory.get(targetTickNum));
+        playersHistory.get(targetTickNum);
+        OldPlayer oldPlayer = map.getEntities(OldPlayer.class).get(0);
+        oldPlayer.setTickStart(targetTickNum);
+        oldPlayer.setTickEnd(tickCount);
+        oldPlayer.setPlayerActionHistory(playerActionHistory);
+        oldPlayer.setDirectionHistory(directionHistory);
+        oldPlayer.setBuildablesAndIdsHistory(buildablesAndIdsHistory);
+        return this;
     }
 
     public void spawnEntityFromFactory(String toSpawn, Entity configEntities) {
