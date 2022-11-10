@@ -139,8 +139,8 @@ public class MercenaryTest {
         assertEquals(new Position(7, 1), getMercPos(res));
 
         // attempt bribe
-        assertDoesNotThrow(() -> dmc.interact(mercId));
-        assertEquals(1, TestUtils.getInventory(res, "treasure").size());
+        res = assertDoesNotThrow(() -> dmc.interact(mercId));
+        assertEquals(0, TestUtils.getInventory(res, "treasure").size());
     }
 
     @Test
