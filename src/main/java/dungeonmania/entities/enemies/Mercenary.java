@@ -51,22 +51,24 @@ public class Mercenary extends Enemy implements Interactable {
     /**
      * bribe the merc
      */
-    private void bribe(Player player) {
+    public void bribe(Player player) {
         if (player.countEntityOfType(Sceptre.class) > 0) {
             Sceptre sceptre = player.getFirstInventoryItem(Sceptre.class);
             mindControlduration = sceptre.getDuration();
+            setMovement(new AllyMove(player));
+            allied = true;
             return;
         }
         for (int i = 0; i < bribeAmount; i++) {
             player.use(Treasure.class);
         }
+        setMovement(new AllyMove(player));
+        allied = true;
     }
 
     @Override
     public void interact(Player player, Game game) {
-        allied = true;
         bribe(player);
-        setMovement(new AllyMove(player));
     }
 
     @Override
@@ -88,5 +90,17 @@ public class Mercenary extends Enemy implements Interactable {
                 super.setMovement(new HostileMove());
             }
         }
+    }
+
+    protected int getBribeAmount() {
+        return bribeAmount;
+    }
+
+    protected void setAllied(boolean allied) {
+        this.allied = allied;
+    }
+
+    protected void setMindControlduration(int mindControlduration) {
+        this.mindControlduration = mindControlduration;
     }
 }
