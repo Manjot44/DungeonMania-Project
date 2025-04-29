@@ -1,4 +1,4 @@
-# DungeonMania – 2-D Dungeon Crawler Backend
+# DungeonMania – 2-D Dungeon Crawler
 
 
 
