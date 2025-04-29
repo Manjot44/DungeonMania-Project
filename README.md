@@ -35,7 +35,7 @@ This repository focuses on the **backend engine** and **automated testing suite*
 ```
 
 ---
-## 🚀 Quick Start (Backend Only)
+## 🚀 Quick Start
 1. **Clone & build**
    ```bash
    git clone https://github.com/Manjot44/DungeonMania-Project.git
@@ -43,7 +43,7 @@ This repository focuses on the **backend engine** and **automated testing suite*
    gradle run              # downloads dependencies & starts SparkJava server
    ```
 2. **Access the API or manual tests**
-   👉 http://localhost:4567/app/
+   👉 http://localhost:4568/app/
 
 > **Note**: Java 11+ and Gradle are required. 
 
