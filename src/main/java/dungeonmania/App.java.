@@ -1,3 +1,5 @@
+package dungeonmania;
+
 import spark.Request;
 import spark.Spark;
 import spark.servlet.SparkApplication;
