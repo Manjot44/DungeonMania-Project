@@ -53,7 +53,8 @@ JUnit 5 tests were a major focus of development.
 
 ```bash
 # Execute the full test-suite
-gradle test                    # executes ~350 JUnit 5 tests
+gradle test
+
 # View the HTML report (build/reports/tests/test/index.html)
 $ open build/reports/tests/test/index.html   # Example for macOS
 ```
