@@ -52,8 +52,8 @@ This repository focuses on the **backend engine** and **automated testing suite*
 JUnit 5 tests were a major focus of development.
 
 ```bash
-./gradlew test                    # executes ~350 JUnit 5 tests
-./gradlew jacocoTestReport        # generates coverage report (HTML under build/reports)
+gradle test                    # executes ~350 JUnit 5 tests
+gradle jacocoTestReport        # generates coverage report (HTML under build/reports)
 ```
 Tests cover:
 - Entity behaviour validation
